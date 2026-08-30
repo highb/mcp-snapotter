@@ -1,0 +1,42 @@
+# mise is a convenience shim. Every task below maps to a plain command
+# that works in an ordinary virtualenv -- see the table in README.md.
+
+[tools]
+python = "3.13"
+uv = "latest"
+
+[tasks.serve]
+description = "Run the SnapOtter MCP server (stdio)"
+run = "uv run snapotter-mcp"
+
+[tasks.check]
+description = "Verify Cloudflare Access + SnapOtter connectivity"
+run = "./check-access.sh"
+
+[tasks.creds]
+description = "Show which credentials resolve, and from where (no values)"
+run = "uv run python -m snapotter_mcp.credentials --check"
+
+[tasks.fetch-spec]
+description = "Download the OpenAPI spec from your SnapOtter instance"
+run = "./fetch-spec.sh"
+
+[tasks.lint]
+description = "Lint and format-check with ruff"
+run = ["uv run ruff check src/", "uv run ruff format --check src/"]
+
+[tasks.fmt]
+description = "Auto-format and auto-fix with ruff"
+run = ["uv run ruff check --fix src/", "uv run ruff format src/"]
+
+[tasks.check-all]
+description = "Lint, type-check, and smoke test"
+depends = ["lint", "types", "smoke"]
+
+[tasks.types]
+description = "Type-check with mypy (strict)"
+run = "uv run mypy"
+
+[tasks.smoke]
+description = "End-to-end smoke test against the live instance"
+run = "uv run python -m snapotter_mcp.smoke"

@@ -1,0 +1,78 @@
+[project]
+name = "snapotter-mcp"
+version = "0.1.0"
+description = "MCP server for the SnapOtter file-processing API"
+readme = "README.md"
+license = "MIT"
+authors = [{ name = "Brandon High" }]
+keywords = ["mcp", "snapotter", "model-context-protocol"]
+requires-python = ">=3.12"
+dependencies = [
+    "mcp>=2.1,<3",
+    "httpx>=0.27",
+    "pyyaml>=6.0.3",
+    "types-pyyaml>=6.0.12.20260815",
+]
+
+[project.optional-dependencies]
+dev = ["mypy>=1.11", "ruff>=0.6", "types-PyYAML"]
+
+[project.scripts]
+snapotter-mcp = "snapotter_mcp.server:main"
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/snapotter_mcp"]
+
+[dependency-groups]
+dev = [
+    "mypy>=2.3.1",
+    "ruff>=0.16.5",
+]
+
+[tool.mypy]
+python_version = "3.12"
+strict = true
+files = ["src/snapotter_mcp"]
+
+[[tool.mypy.overrides]]
+# The MCP SDK's decorators are untyped; our own wrapper restores signatures.
+module = "mcp.*"
+ignore_missing_imports = true
+
+[tool.ruff]
+target-version = "py312"
+src = ["src"]
+
+[tool.ruff.lint]
+select = [
+    "E", "W",    # pycodestyle
+    "F",         # pyflakes
+    "I",         # import sorting
+    "UP",        # pyupgrade
+    "B",         # bugbear
+    "SIM",       # simplify
+    "C4",        # comprehensions
+    "PIE",       # misc lints
+    "PTH",       # prefer pathlib
+    "RET",       # return values
+    "ARG",       # unused arguments
+    "PL",        # pylint subset
+    "RUF",       # ruff-specific
+]
+ignore = [
+    "PLR0912",   # branch count: the tool dispatchers are legitimately branchy
+    "PLR2004",   # magic values: HTTP status codes read fine inline
+]
+
+[tool.ruff.lint.pylint]
+# An MCP tool's signature is its public API; run_tool legitimately takes six.
+max-args = 8
+max-positional-args = 8
+
+[tool.ruff.lint.per-file-ignores]
+# The smoke test is a script: prints, broad excepts and long bodies are the point.
+"src/snapotter_mcp/smoke.py" = ["PLR0915", "T201"]

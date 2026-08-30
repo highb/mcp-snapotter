@@ -1,0 +1,45 @@
+# snapotter-mcp configuration. Copy to snapotter.toml and edit.
+#
+# This file is entirely OPTIONAL. With no snapotter.toml at all, the server
+# reads credentials straight from the environment:
+#
+#   SNAPOTTER_URL=https://snapotter.example.com
+#   SNAPOTTER_API_KEY=si_...
+#
+# Everything below is opt-in convenience on top of that.
+
+[instance]
+# Pin the instance URL here instead of using SNAPOTTER_URL.
+# url = "https://snapotter.example.com"
+
+
+# ---------------------------------------------------------------------
+# Optional: fetch secrets from 1Password instead of the environment.
+#
+# Uncomment this block to enable it. Naming an `item` is enough -- the
+# provider is inferred, so you do not need to set it explicitly. Requires
+# the `op` CLI on PATH.
+# ---------------------------------------------------------------------
+
+# [secrets]
+# item  = "REPLACE_ME"   # 1Password item UUID or title
+# vault = "REPLACE_ME"   # required when using a service account token
+#
+# # Where to find OP_SERVICE_ACCOUNT_TOKEN if it is not already exported.
+# # Omit to authenticate as a signed-in user via the desktop app instead.
+# token_file = ".env"
+#
+# [secrets.fields]
+# # setting name -> label of the field in the 1Password item
+# url = "SNAPOTTER_URL"
+# api_key = "SNAPOTTER_API_KEY"
+# cf_client_id = "CF_ACCESS_CLIENT_ID"
+# cf_client_secret = "CF_ACCESS_CLIENT_SECRET"
+
+
+# ---------------------------------------------------------------------
+# Cloudflare Access is optional. If CF_ACCESS_CLIENT_ID and
+# CF_ACCESS_CLIENT_SECRET are set (here via [secrets.fields], or in the
+# environment), the server sends the service-token headers. If they are
+# absent it makes plain requests -- nothing else changes.
+# ---------------------------------------------------------------------

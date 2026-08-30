@@ -1,0 +1,16 @@
+{
+  "_comment": "Two ways to launch. Use whichever matches your setup.",
+
+  "mcpServers": {
+    "snapotter": {
+      "command": "snapotter-mcp",
+      "cwd": "/absolute/path/to/snapotter-mcp"
+    },
+
+    "snapotter-via-mise": {
+      "command": "mise",
+      "args": ["exec", "--", "uv", "run", "snapotter-mcp"],
+      "cwd": "/absolute/path/to/snapotter-mcp"
+    }
+  }
+}
