@@ -2,7 +2,7 @@
 # that works in an ordinary virtualenv -- see the table in README.md.
 
 [tools]
-python = "3.13"
+python = "3.14.7"
 uv = "latest"
 
 [tasks.serve]
