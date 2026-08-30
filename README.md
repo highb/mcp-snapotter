@@ -3,6 +3,10 @@
 An MCP server for [SnapOtter](https://github.com/snapotter-hq/SnapOtter) — 243 file-processing
 tools across image, video, audio, PDF, and general files.
 
+**AI Content Warning** This was written almost entirely by Claude. Life is too short to
+write an MCP for a well-defined OpenAPI spec by hand.
+
+
 ## Setup
 
 Install however you like. With [mise](https://mise.jdx.dev):
