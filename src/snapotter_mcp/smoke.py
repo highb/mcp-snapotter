@@ -17,7 +17,7 @@ from pathlib import Path
 from unittest import mock
 
 from . import credentials, server
-from .client import _json
+from .client import SnapOtterClient, SnapOtterError, _json
 from .config import Config
 
 
@@ -164,9 +164,29 @@ def main() -> int:
             assert sum(k.startswith("CF-") for k in fronted) == 2, sorted(fronted)
             return "CF headers omitted when unset, sent when both present"
 
+        def foreign_download_refused() -> str:
+            cfg = Config(
+                base_url="https://ex.test",
+                api_key="si_x",
+                cf_client_id=None,
+                cf_client_secret=None,
+                spec_path=tmpdir / "unused.yaml",
+                timeout=5,
+                async_timeout=5,
+            )
+            with SnapOtterClient(cfg) as offline:
+                for url in ("https://elsewhere.test/f.png", "http://ex.test/f.png"):
+                    try:
+                        offline.download(url, tmpdir / "leak.png")
+                    except SnapOtterError:
+                        continue
+                    raise AssertionError(f"downloaded from {url} with the API key")
+            return "absolute URLs off the instance never get the API key"
+
         check("env-only credentials", cfg_no_file)
         check("1Password is opt-in", cfg_inferred)
         check("Cloudflare Access is optional", cf_optional)
+        check("downloads stay on the instance", foreign_download_refused)
 
         print("\nconnectivity")
         check("health", lambda: server.snapotter_health()["health"])

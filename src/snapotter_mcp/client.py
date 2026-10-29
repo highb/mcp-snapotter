@@ -219,6 +219,20 @@ class SnapOtterClient:
     # --- downloads -------------------------------------------------------
 
     def download(self, url_path: str, destination: Path) -> Path:
+        # Every request carries the API key (and the CF service token), and
+        # httpx sends an absolute URL as-is, ignoring base_url -- so only fetch
+        # from the configured instance, never from wherever a URL points.
+        target = httpx.URL(url_path)
+        base = self._http.base_url
+        if target.is_absolute_url and (target.scheme, target.host, target.port) != (
+            base.scheme,
+            base.host,
+            base.port,
+        ):
+            raise SnapOtterError(
+                f"refusing to download from {target.host}: it is not the "
+                f"configured SnapOtter instance ({base.host})"
+            )
         destination = Path(destination).expanduser()
         destination.parent.mkdir(parents=True, exist_ok=True)
         with self._http.stream("GET", url_path) as response:
